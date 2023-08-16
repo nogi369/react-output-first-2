@@ -4,8 +4,12 @@ import { INIT_TODO_LIST, INIT_UNIQUE_ID } from "../../../constants/data"
 import { useState } from "react"
 
 export const TodoTemplate = () => {
+  // デフォルトTodoList
   const [ originTodoList, setOriginTodoList ] = useState(INIT_TODO_LIST);
+  // 採番ID
   const [ uniqueId, setUniqueId ] = useState(INIT_UNIQUE_ID);
+  // 入力値
+  const [ addInputValue, setAddInputValue ] = useState("");
 
   const handleDeleteTodo = (targetId, targetTitle) => {
     // https://fuuno.net/nani/nani02/nani02.html
@@ -17,10 +21,26 @@ export const TodoTemplate = () => {
     }
   }
 
+  // 入力値の変更処理
+  const onChangeAddInputValue = (e) => setAddInputValue(e.target.value);
+
+  // 新規登録処理
+  const handleAddTodo = () => {
+
+  }
+
+  // onChangeAddInputValue ＝ onChangeTodoだけ属性名に変更がある => onChangeAddInputValue は値ではなく処理だから
   return (
     <>
-      <AddTodo />
-      <TodoList todoList={originTodoList} handleDeleteTodo={handleDeleteTodo} />
+      <AddTodo
+      addInputValue={addInputValue}
+      onChangeTodo={onChangeAddInputValue}
+      handleAddTodo={handleAddTodo}
+      />
+      <TodoList
+      todoList={originTodoList}
+      handleDeleteTodo={handleDeleteTodo}
+      />
     </>
   )
 }
