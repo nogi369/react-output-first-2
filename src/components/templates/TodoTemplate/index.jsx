@@ -10,6 +10,8 @@ export const TodoTemplate = () => {
   const [ uniqueId, setUniqueId ] = useState(INIT_UNIQUE_ID);
   // 入力値
   const [ addInputValue, setAddInputValue ] = useState("");
+  // 表示用TodoList
+  const [ showTodoList, setShowTodoList ] = useState(INIT_TODO_LIST);
 
   const handleDeleteTodo = (targetId, targetTitle) => {
     // https://fuuno.net/nani/nani02/nani02.html
@@ -17,7 +19,7 @@ export const TodoTemplate = () => {
 
       const newTodoList = originTodoList.filter((todo) => todo.id !== targetId) 
 
-      setOriginTodoList(newTodoList);
+      setShowTodoList(newTodoList);
     }
   }
 
@@ -41,7 +43,7 @@ export const TodoTemplate = () => {
       ]
       
       // 各種更新処理
-      setOriginTodoList(newTodoList);
+      setShowTodoList(newTodoList);
       setUniqueId(nextUniqueId);
       setAddInputValue("");
     }
@@ -56,7 +58,7 @@ export const TodoTemplate = () => {
       handleAddTodo={handleAddTodo}
       />
       <TodoList
-      todoList={originTodoList}
+      todoList={showTodoList}
       handleDeleteTodo={handleDeleteTodo}
       />
     </>
