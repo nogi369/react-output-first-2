@@ -25,8 +25,26 @@ export const TodoTemplate = () => {
   const onChangeAddInputValue = (e) => setAddInputValue(e.target.value);
 
   // 新規登録処理
-  const handleAddTodo = () => {
-
+  const handleAddTodo = (e) => {
+    // EnterKeyを押された かつ 入力値が空文字でない こと
+    if (e.key === "Enter" && addInputValue !== "") {
+      // 新規作成するTodoの一意なid
+      const nextUniqueId = uniqueId + 1;
+    
+      // 新規作成するTodoを含めた更新後のTodoList
+      const newTodoList = [
+        ...originTodoList,
+        {
+          id: nextUniqueId,
+          title: addInputValue,
+        }
+      ]
+      
+      // 各種更新処理
+      setOriginTodoList(newTodoList);
+      setUniqueId(nextUniqueId);
+      setAddInputValue("");
+    }
   }
 
   // onChangeAddInputValue ＝ onChangeTodoだけ属性名に変更がある => onChangeAddInputValue は値ではなく処理だから
