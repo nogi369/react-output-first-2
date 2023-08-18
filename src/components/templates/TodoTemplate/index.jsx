@@ -1,9 +1,8 @@
 import { AddTodo } from "../../organisms/AddTodo"
 import { TodoList } from "../../organisms/TodoList"
 import { INIT_TODO_LIST, INIT_UNIQUE_ID } from "../../../constants/data"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { InputForm } from "../../atoms/InputForm"
-import { searchTodo } from "../../../utils/todoLogic"
 
 export const TodoTemplate = () => {
   // デフォルトTodoList
@@ -15,21 +14,20 @@ export const TodoTemplate = () => {
   // 検索キーワード
   const [ searchKeyword, setSearchKeyword ] = useState("");
   // 表示用TodoList
-  const [ showTodoList, setShowTodoList ] = useState(INIT_TODO_LIST);
-
-  // 表示用TodoList更新処理(setShowTodoListの強化版)
-  const updateShowTodoList = (newTodoList, keyword) => {
-    setShowTodoList(
-      keyword !== "" ? searchTodo(newTodoList, keyword) : newTodoList
-    )
-  }
+  const showTodoList = useMemo(() => {
+    return originTodoList.filter((todo) => {
+      // 修正箇所
+      const regexp = new RegExp("^" + searchKeyword, "i")
+      return todo.title.match(regexp)
+    })
+  },[originTodoList, searchKeyword])
 
   // 入力値の変更処理
   const onChangeAddInputValue = (e) => setAddInputValue(e.target.value);
 
   // 新規登録処理
   const handleAddTodo = (e) => {
-    // EnterKeyを押された かつ 入力値が空文字でない こと
+    // EnterKeyを押された かつ 入力値が空文字でないこと
     if (e.key === "Enter" && addInputValue !== "") {
       // 新規作成するTodoの一意なid
       const nextUniqueId = uniqueId + 1;
@@ -44,8 +42,6 @@ export const TodoTemplate = () => {
       ]
       
       setOriginTodoList(newTodoList)
-      updateShowTodoList(newTodoList, searchKeyword);
-
       setUniqueId(nextUniqueId);
       setAddInputValue("");
     }
@@ -58,21 +54,12 @@ export const TodoTemplate = () => {
       const newTodoList = originTodoList.filter((todo) => todo.id !== targetId) 
 
       setOriginTodoList(newTodoList)
-
-      updateShowTodoList(newTodoList, searchKeyword);
     }
   }
 
   // 検索処理
-  const handleSearchTodo = (e) => {
-    const keyword = e.target.value;
-
-    setSearchKeyword(keyword);
-
-    // デフォルトのTodoリストと生のkeywordを引数に渡す => 検索処理はnewTodoやsearchKeywordといった更新された値を持つ処理ではないから
-    updateShowTodoList(originTodoList, keyword);
-  }
-
+  const handleChangeSearchKeyword = (e) => setSearchKeyword(e.target.value);
+  
   // onChangeAddInputValue ＝ onChangeTodoだけ属性名に変更がある => onChangeAddInputValue は値ではなく処理だから
   // https://web-engineer-wiki.com/javascript/react/react-error02/
   return (
@@ -87,7 +74,7 @@ export const TodoTemplate = () => {
       <section>
       <InputForm
       inputValue={searchKeyword}
-      handleChangeValue={handleSearchTodo}
+      handleChangeValue={handleChangeSearchKeyword}
       placeholder={"Search Keyword"}
       />
       </section>
